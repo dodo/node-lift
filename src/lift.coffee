@@ -75,30 +75,44 @@ JQueryJSONHandler =
 class LiftState
     constructor: (opts, context) ->
         [context, opts] = [opts, {}] unless context?
+
+        # contains all server parts
         @context = context or {}
+
+        # {server:function(state,req,res){…}, client:function(name,next){…}}
+        # its job is to transport data
         @handler  = opts.handler  or JQueryHTMLHandler
+
+        # {server:function(id,data){…}, client:function(id,data){…}}
+        # its job is to fit data into document
         @renderer = opts.renderer or PlainRenderer
 
+        # this little trick makes the LiftState callable
         @lift.handle = @handle
         @lift.code = @code
         @lift.run = @run
         @lift.has = @has
         return @lift
 
+    # defines a client part by name
     lift: (name, fun) =>
         @renderer.server(name, injection_point(name, fun))
 
+    # handles a client request by given handler
     handle: (req, res) =>
         @handler.server(this, req, res)
 
+    # code needed on client side
     code: () =>
         ";lift=(#{lift_code})();" +
         "lift.render=#{@renderer.client};" +
         "lift.request=#{@handler.client};"
 
+    # invoke server part by name
     run: (name, args...) =>
         @context[name].apply(this, args)
 
+    # check if part exists on server side
     has: (name) =>
         @context[name]?
 

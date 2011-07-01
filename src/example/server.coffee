@@ -1,10 +1,10 @@
 {LiftState, CoffeeKupRenderer, JQueryJSONHandler} = require('../lift')
+coffeekup = require('coffeekup') # http://coffeekup.org/
 connect = require('connect')
-coffeekup = require('coffeekup')
 
-# client part
+# client side
 
-template = ->
+template = -> # coffeekup
     doctype 5
     html ->
         head ->
@@ -14,7 +14,7 @@ template = ->
                 body {font-family: sans-serif}
                 header, nav, section, footer {display: block}
             '''
-            script src:'http://code.jquery.com/jquery-1.6.1.min.js' # lift is using jquery to :/
+            script src:'http://code.jquery.com/jquery-1.6.1.min.js' # lift is using jquery too :/
             script src:'http://coffeekup.org/coffeekup.js' # because the client side part is using this as well
             script {type:'text/javascript'}, @lift.code() # all needed boilerplade code. it also defines 'lift' in the global context
             coffeescript ->
@@ -29,7 +29,7 @@ template = ->
                     text 'awesome!'
 
 
-# server part
+# server side
 
 server = connect.createServer connect.logger(), (req, res) ->
     state = new LiftState renderer:CoffeeKupRenderer, handler:JQueryJSONHandler,
