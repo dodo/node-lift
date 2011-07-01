@@ -119,7 +119,7 @@ class LiftState
 
 # exports
 
-module.exports = {LiftState,
+module.exports = {LiftState, State:LiftState,
     # renderer
     PlainRenderer,
     CoffeeKupRenderer,

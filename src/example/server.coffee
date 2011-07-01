@@ -36,7 +36,7 @@ server = connect.createServer connect.logger(), (req, res) ->
         # defining the server side of the lifted parts
         test: () -> {value:'finely done.'}
 
-    return if state.handle(req, res) # process all ajax request
+    return if state.handle(req, res) # process all ajax requests
     # normal page …
     body = coffeekup.render template, context:{lift:state}, format:on
     # normal http server foo
