@@ -23,7 +23,7 @@ template = -> # coffeekup
                     lift.load('test') # requesting data for part 'test'
         body ->
             text 'lifting data to the next request layer:'
-            @lift 'test', (data) -> # defining the client side part
+            @lift 'test', (data) -> # defining the client side part - keyword is handler specific
                 text data.value
                 div style:'color:red', ->
                     text 'awesome!'
@@ -36,7 +36,7 @@ server = connect.createServer connect.logger(), (req, res) ->
         # defining the server side of the lifted parts
         test: () -> {value:'finely done.'}
 
-    return if state.handle(req, res) # process all ajax requests
+    return if state.handle(req, res) # process all ajax requests / handler specific
     # normal page …
     body = coffeekup.render template, context:{lift:state}, format:on
     # normal http server foo

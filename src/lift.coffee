@@ -13,12 +13,13 @@ lift_code = ->
         args = (JSON.stringify(arg) for arg in slice.call(arguments, 1))
         new Function "(#{context[id]})(#{args.join(',')})"
     lift = window.lift =
-        call: (id) ->
+        call: (id) -> # all other arguments passed to the context function
             args = slice.call(arguments, 1)
             context[id]?.apply(0, args)
-        load: (id) ->
-            lift.request id, (data) ->
-                lift.render(id, closure(id, data))
+        load: (id) -> # all other arguments passed to client part of handler
+            args = slice.call(arguments)
+            args = args.concat [(data) -> lift.render(id, closure(id, data))]
+            lift.request.apply(this, args)
         define: (id, callback) ->
             context[id] = callback
         DEBUG: () -> console.log "LIFT-CONTEXT", context
@@ -53,8 +54,8 @@ JQueryHTMLHandler = # default
         res.end()
         return true
 
-    client: (name, next) ->
-        $.ajax(url:'?lift='+name).success(next) # FIXME to lazy to replace this
+    client: (name, url, next) ->
+        $.ajax(url).success(next) # FIXME to lazy to replace this
 
 JQueryJSONHandler =
     server: (state, req, res) ->
@@ -79,7 +80,7 @@ class LiftState
         # contains all server parts
         @context = context or {}
 
-        # {server:function(state,req,res){…}, client:function(name,next){…}}
+        # {server:function(state,req,res){…}, client:function(args...,next){…}}
         # its job is to transport data
         @handler  = opts.handler  or JQueryHTMLHandler
 
