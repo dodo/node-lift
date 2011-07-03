@@ -2,16 +2,17 @@
 
 # helper
 
-injection_point = (id, injection) ->
-    """<script>window.lift.define('#{id}',#{injection})</script>"""
+injection_point = (id, locals, injection) ->
+    """<script>window.lift.define('#{id}',#{locals},#{injection})</script>"""
 
 
 lift_code = ->
     slice = Array.prototype.slice
     context = {}
     closure = (id) ->
+        resume = context[id]
         args = (JSON.stringify(arg) for arg in slice.call(arguments, 1))
-        new Function "(#{context[id]})(#{args.join(',')})"
+        new Function "with(#{resume.locals}){(#{resume})(#{args.join(',')})}"
     lift = window.lift =
         call: (id) -> # all other arguments passed to the context function
             args = slice.call(arguments, 1)
@@ -20,8 +21,9 @@ lift_code = ->
             args = slice.call(arguments)
             args = args.concat [(data) -> lift.render(id, closure(id, data))]
             lift.request.apply(this, args)
-        define: (id, callback) ->
-            context[id] = callback
+        define: (id, locals, resume_state) ->
+            resume_state.locals = JSON.stringify(locals)
+            context[id] = resume_state
         DEBUG: () -> console.log "LIFT-CONTEXT", context
 
 # Renderers
@@ -96,8 +98,11 @@ class LiftState
         return @lift
 
     # defines a client part by name
-    lift: (name, fun) =>
-        @renderer.server(name, injection_point(name, fun))
+    lift: (name, locals, fun) =>
+        [fun, locals] = [locals, {}] unless fun
+        locals ?= {}
+        locals = JSON.stringify(locals) # WARNING just json, no functions allowed! :(
+        @renderer.server(name, injection_point(name, locals, fun))
 
     # handles a client request by given handler
     handle: (req, res) =>

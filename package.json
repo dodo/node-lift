@@ -1,6 +1,6 @@
 { "name": "lift"
 , "description": "lifting code to the client"
-, "version": "0.0.1"
+, "version": "0.0.2"
 , "homepage": "https://github.com/dodo/node-lift"
 , "author": "dodo (https://github.com/dodo)"
 , "repository": {"type": "git", "url": "git://github.com/dodo/node-lift.git"}
