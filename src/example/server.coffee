@@ -59,8 +59,8 @@ server = connect.createServer connect.logger(), (req, res) ->
 
     # we want to render the given liftstate aspect on the server
     state.direct('hit',
-        {render:((f)->f())}, # just a dummy because we are allready in coffeekup
-        {value:"other lift has a 2sec delay"}) # normal payload data
+        {render:((f)->f())}, # ck - just a dummy because we are allready in coffeekup
+        {value:"other lift has a 2sec delay"}) # data - normal payload data
 
     if query.lift # ajax request …
         res.setHeader('Content-Type', "application/json")
