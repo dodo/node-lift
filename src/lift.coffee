@@ -33,16 +33,16 @@ class LiftState
 
         # this little trick makes the LiftState instance callable
         @lift.direct = @direct
-        @lift.code = @code
+        @lift.code = @code = LiftState.code
         @lift.self = this # dont hide LiftState instance
         return @lift
 
     direct: (name, args...) =>
         @context[name] = args
 
-    # code needed on client side
-    code: () =>
-        ";lift=(#{lift_client_code})();"
 
+# code needed on client side
+LiftState.code = () ->
+    ";lift=(#{lift_client_code})();"
 
 module.exports = LiftState
