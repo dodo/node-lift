@@ -1,48 +1,56 @@
 # node lift
 
-dual side templating.
+dual side templating, made easy.
 
 this library tries to simplify templating by lifting parts of a template to
 the client. these parts will be processed, when the client got all data.
-it's basicly hiding all client request (like ajax, websockets, etc) for you.
 
 ## installation
 
     npm install lift
 
-## usage
+## api
 
-first you need to include everything you need:
-
-```javascript
-var lift = require('lift'),
-    LiftState = lift.State, JQueryJSONHandler = lift.JQueryJSONHandler;
-```
-
-the next thing is to define every part on server side:
+### LiftState
 
 ```javascript
-state = new LiftState({handler:JQueryJSONHandler},{
-    // defining the server side of the lifted parts
-    test: function () {
-        return {value:'finely done.'};
-    },
-});
-if (state.handle(req, res)) return; // process all ajax requests
+LiftState = require('lift')
+lift = new LiftState()
 ```
 
-with this new state you can now create the client side of the parts:
+it actually returns a function, so `lift` is callable.
+the LiftState instance can be accessed via `lift.self`.
+
+### lift
 
 ```javascript
-state('test', function (data) {
-    // this will be done after an ajax request from the client.
-    return data.value.toUpperCase();
-});
+lift(id, static_args..., function (static_args..., dynamic_args..., data) {…})
+```
+this is the main part of the library.
+it defines a function that can run on server or client (decision can be made per request by calling `lift.direct` before).
+it is best used in the views to define lazy template parts.
+
+### lift.direct
+
+```javascript
+lift.direct(id, args..., data)
 ```
 
-the [example server](https://github.com/dodo/node-lift/blob/master/src/example/server.coffee)
-should explain everything else. it also contains a little more complex flavor of
-the above exmaple with [coffeekup](http://coffeekup.org/).
+sets the arguments of given `id`-part. when `id`-part gets defined it will be called direct.
+useful to render parts on server side.
 
-based on [lifts lazy load idea](http://demo.liftweb.net/lazy).
+### lift.code
+
+```javascript
+client_side_code = lift.code() // or LiftState.code()
+script_tag = '<script type="text/javascript">' + client_side_code + '</script>'
+```
+
+returns client side code. only needed once per request.
+
+## example
+
+the [example server](https://github.com/dodo/node-lift/blob/master/src/example/server.coffee) should explain everything else.
+
+influenced by [lifts lazy load idea](http://demo.liftweb.net/lazy).
 
