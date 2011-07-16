@@ -1,12 +1,12 @@
 { "name": "lift"
-, "description": "lifting code to the client"
-, "version": "0.0.2"
+, "description": "lifting code to the client: dual side templating made easy"
+, "version": "0.0.3"
 , "homepage": "https://github.com/dodo/node-lift"
 , "author": "dodo (https://github.com/dodo)"
 , "repository": {"type": "git", "url": "git://github.com/dodo/node-lift.git"}
 , "main": "lift.js"
 , "engines": {"node": "0.4.x"}
-, "keywords": ["client", "code", "lift", "templating"]
+, "keywords": ["client", "server", "node", "code", "lift", "lazy", "templating", "template"]
 , "scripts": {
     "install": "node-waf configure build",
     "update": "node-waf build"}

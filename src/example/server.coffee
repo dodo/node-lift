@@ -1,6 +1,7 @@
-{LiftState, CoffeeKupRenderer, JQueryJSONHandler} = require('../lift')
+LiftState = require('../lift')
 coffeekup = require('coffeekup') # http://coffeekup.org/
 connect = require('connect')
+{parse} = require('url')
 
 # client side
 
@@ -10,40 +11,70 @@ template = -> # coffeekup
         head ->
             meta charset:'utf-8'
             title @title or "lifted!"
-            style '''
-                body {font-family: sans-serif}
-                header, nav, section, footer {display: block}
-            '''
-            script src:'http://code.jquery.com/jquery-1.6.1.min.js' # lift is using jquery too :/
+            style 'body {font-family: sans-serif}'
+            script src:'http://code.jquery.com/jquery-1.6.1.min.js'
             script src:'http://coffeekup.org/coffeekup.js' # because the client side part is using this as well
-            script {type:'text/javascript'}, @lift.code() # all needed boilerplade code. it also defines 'lift' in the global context
-            coffeescript ->
-                $().ready ->
+            script {type:'text/javascript'}, @lift.code() # all needed boilerplate code. it also defines 'lift' in the global context; only need once
+            coffeescript -> # client code
+                $('document').ready ->
                     lift.DEBUG()
-                    lift.load('test') # requesting data for part 'test'
+                    # requesting data for part 'test'
+                    setTimeout ->
+                        $.getJSON "?", lift:'test', (data) ->
+                            $('#test-content').html lift.call('test', window.CoffeeKup, data)
+                    , 2000 # 2sec delay
         body ->
             text 'lifting data to the next request layer:'
-            @lift 'test', addr:@remoteAddr, (data) -> # defining the client side part - keyword is handler specific
-                text data.value
-                div style:'color:red', ->
-                    text 'awesome!'
-                small style:'color:gray', ->
-                    text 'request by ' + addr
+            div id:'hit-content',  ->
+                @lift 'hit', @remoteAddr, (addr, ck, data) ->
+                    ck.render ->
+                        text data.value
+                        div style:'color:blue', ->
+                            text "this was fast."
+                        small style:'color:gray', ->
+                            text "request by #{addr}"
+                    ,locals:{data, addr}
+            div id:'test-content', ->
+                text "* loading content  …"
+                # defining the client side part
+                @lift 'test', @remoteAddr, (addr, ck, data) ->
+                    ck.render ->
+                        text data.value
+                        div style:'color:red', ->
+                            text "awesome!"
+                        small style:'color:gray', ->
+                            text "request by #{addr}"
+                    ,locals:{data, addr}
 
 
 # server side
 
 server = connect.createServer connect.logger(), (req, res) ->
-    state = new LiftState renderer:CoffeeKupRenderer, handler:JQueryJSONHandler,
-        # defining the server side of the lifted parts
-        test: () -> {value:'finely done.'}
+    {query, pathname} = parse(req.url, true)
+    unless pathname is "/"
+        res.statusCode = 404
+        return res.end()
 
-    return if state.handle(req, res) # process all ajax requests / handler specific
-    # normal page …
-    context =
-        lift:state
-        remoteAddr:req.socket.remoteAddress
-    body = coffeekup.render template, {context, format:on}
+    state = new LiftState
+
+    # we want to render the given liftstate aspect on the server
+    state.direct('hit',
+        {render:((f)->f())}, # just a dummy because we are allready in coffeekup
+        {value:"other lift has a 2sec delay"}) # normal payload data
+
+    if query.lift # ajax request …
+        res.setHeader('Content-Type', "application/json")
+        if query.lift is 'hit'
+            body = value:"forever alone data"
+        else if query.lift is 'test'
+            body = value:"laziness is"
+        body = JSON.stringify body
+    else # normal page …
+        res.setHeader('Content-Type', "text/html")
+        context =
+            lift:state
+            remoteAddr:req.socket.remoteAddress
+        body = coffeekup.render template, {context, format:on}
     # normal http server foo
     res.setHeader('Content-Length', body.length)
     res.end(body)

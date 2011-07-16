@@ -43,3 +43,6 @@ state('test', function (data) {
 the [example server](https://github.com/dodo/node-lift/blob/master/src/example/server.coffee)
 should explain everything else. it also contains a little more complex flavor of
 the above exmaple with [coffeekup](http://coffeekup.org/).
+
+based on [lifts lazy load idea](http://demo.liftweb.net/lazy).
+
