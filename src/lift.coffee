@@ -37,8 +37,11 @@ class LiftState
         @lift = (id, args..., func) ->
             unless my.context[id]?
                 args = for arg in args
-                    if typeof arg is 'function' then arg.toString() else arg
-                return injection_point(id, JSON.stringify(args), func)
+                    if typeof arg is 'function'
+                        "(#{arg})"
+                    else
+                        JSON.stringify(arg)
+                return injection_point(id, "[#{args}]", func)
             func.apply(this, args.concat(my.context[id])) # call direct
 
 
