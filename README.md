@@ -71,6 +71,17 @@ lift.call(id, [dynamic_args...], [data])
 
 this invokes the `id`-part at the client defined on server side.
 
+### window.lift.get
+
+```javascript
+fun = lift.get(id, [dynamic_args...])
+func([data])
+```
+* `dynamic_args` arguments defined on client side
+* `data` defined on client side
+
+similar to `window.lift.call` but just returns a function containing all server and client side arguments and the `id`-part.
+
 ### window.lift.DEBUG
 
 ```javascript

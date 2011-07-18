@@ -13,6 +13,13 @@ lift_client_code = ->
             args = slice.call(arguments, 1)
             func = context[id]
             func.apply(this, func.args.concat(args))
+        get: (id) -> # all other arguments passed to the context function
+            args = slice.call(arguments, 1)
+            func = context[id]
+            do (id, args, func) ->
+                return -> # all arguments passed to the context function
+                    argz = slice.call(arguments)
+                    func.apply(this, func.args.concat(args).concat(argz))
         define: (id, args, func) -> # private function; called at injection points
             func.args = args
             context[id] = func
