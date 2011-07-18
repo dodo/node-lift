@@ -35,7 +35,10 @@ class LiftState
 
         # defined here to preserve LiftState's this and function caller's this
         @lift = (id, args..., func) ->
-            return injection_point(id, JSON.stringify(args), func) unless my.context[id]?
+            unless my.context[id]?
+                args = for arg in args
+                    if typeof arg is 'function' then arg.toString() else arg
+                return injection_point(id, JSON.stringify(args), func)
             func.apply(this, args.concat(my.context[id])) # call direct
 
 
