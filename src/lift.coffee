@@ -9,6 +9,7 @@ lift_client_code = ->
     slice = Array.prototype.slice # to avoid coffeescript optimization
     context = {}
     lift = window.lift =
+        context:context
         call: (id) -> # all other arguments passed to the context function
             args = slice.call(arguments, 1)
             func = context[id]
