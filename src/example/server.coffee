@@ -27,24 +27,26 @@ template = -> # coffeekup
             text 'lifting data to the next request layer:'
             div id:'hit-content',  ->
                 @lift 'hit', @remoteAddr, (addr, ck, data) ->
+                    console.log "lift" ,arguments
                     ck.render ->
                         text data.value
                         div style:'color:blue', ->
                             text "this was fast."
                         small style:'color:gray', ->
                             text "request by #{addr}"
-                    ,locals:{data, addr}
+                    ,dynamic_locals:on, locals:{data, addr}
             div id:'test-content', ->
                 text "* loading content  …"
                 # defining the client side part
                 @lift 'test', @remoteAddr, (addr, ck, data) ->
+                    console.log "test" ,arguments
                     ck.render ->
                         text data.value
                         div style:'color:red', ->
                             text "awesome!"
                         small style:'color:gray', ->
                             text "request by #{addr}"
-                    ,locals:{data, addr}
+                    ,dynamic_locals:on, locals:{data, addr}
 
 
 # server side
