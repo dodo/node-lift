@@ -30,29 +30,36 @@ lift_client_code = ->
 
 class LiftState
     constructor: () ->
-        @context = {}
+        @context = direct:{}, get:{}
         my = this
 
         # defined here to preserve LiftState's this and function caller's this
         @lift = (id, args..., func) ->
-            unless my.context[id]?
+            if my.context.direct[id]? # call direct
+                func.apply(this, args.concat(my.context[id]))
+            else if my.context.get[id]? # return lift function
+                my.context.get[id].apply(this, [func].concat(args))
+            else # insert script tag
                 args = for arg in args
                     if typeof arg is 'function'
                         "(#{arg})"
                     else
                         JSON.stringify(arg)
                 return injection_point(id, "[#{args}]", func)
-            func.apply(this, args.concat(my.context[id])) # call direct
 
 
         # this little trick makes the LiftState instance callable
+        @lift.get = @get
         @lift.direct = @direct
         @lift.code = @code = LiftState.code
         @lift.self = this # dont hide LiftState instance
         return @lift
 
     direct: (name, args...) =>
-        @context[name] = args
+        @context.direct[name] = args
+
+    get: (name, callback) =>
+        @context.get[name] = callback
 
 
 # code needed on client side
