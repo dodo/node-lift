@@ -2,7 +2,7 @@
 
 dual side templating, made easy.
 
-this library tries to simplify templating by lifting parts of a template to
+this library simplifies templating by lifting parts of a template to
 the client. these parts will be processed, when the client got all data.
 
 ## installation
@@ -30,7 +30,7 @@ lift(id, static_args..., function ([static_args...], [dynamic_args...], [data]) 
 * `dynamic_args` arguments given on client side
 * `data` given on client side
 
-this defines a function that can run on server or client (decision can be made per request by calling `lift.direct` before).
+this defines a function that can run on server or client (decision can be made per request by calling `lift.direct` or `lift.get` before).
 it is best used in the views to define lazy template parts.
 
 ### lift.direct
@@ -40,6 +40,15 @@ lift.direct(id, args..., data)
 ```
 
 sets the arguments of given `id`-part. when `id`-part gets defined it will be called direct.
+useful to render parts on server side.
+
+### lift.get
+
+```javascript
+lift.get(id, function (lifted_function) {…});
+```
+
+define a function that will be invoked with the requested `id`-part.
 useful to render parts on server side.
 
 ### lift.code
