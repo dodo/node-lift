@@ -36,7 +36,7 @@ class LiftState
         # defined here to preserve LiftState's this and function caller's this
         @lift = (id, args..., func) ->
             if my.context.direct[id]? # call direct
-                func.apply(this, args.concat(my.context[id]))
+                func.apply(this, args.concat(my.context.direct[id]))
             else if my.context.get[id]? # return lift function
                 my.context.get[id].apply(this, [func].concat(args))
             else # insert script tag
