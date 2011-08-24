@@ -24,7 +24,7 @@ template = -> # coffeekup
                             $('#test-content').html lift.call('test', window.CoffeeKup, data)
                     , 2000 # 2sec delay
         body ->
-            text 'lifting data to the next request layer:'
+            text @lift 'info', (txt) -> "#{txt}:"
             div id:'hit-content',  ->
                 @lift 'hit', @remoteAddr, (addr, ck, data) ->
                     console.log "lift" ,arguments
@@ -63,6 +63,9 @@ server = connect.createServer connect.logger(), (req, res) ->
     state.direct('hit',
         {render:((f)->f())}, # ck - just a dummy because we are allready in coffeekup
         {value:"other lift has a 2sec delay"}) # data - normal payload data
+
+    state.get 'info', (template) ->
+        template("lifting data to the next request layer")
 
     if query.lift # ajax request …
         res.setHeader('Content-Type', "application/json")
