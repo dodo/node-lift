@@ -5,7 +5,7 @@
 , "author": "dodo (https://github.com/dodo)"
 , "repository": {"type": "git", "url": "git://github.com/dodo/node-lift.git"}
 , "main": "lift.js"
-, "engines": {"node": "0.4.x"}
+, "engines": {"node": ">= 0.4.x"}
 , "keywords": ["client", "server", "node", "code", "lift", "lazy", "templating", "template"]
 , "scripts": {
     "install": "node-waf configure build",
