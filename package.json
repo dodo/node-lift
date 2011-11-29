@@ -1,6 +1,6 @@
 { "name": "lift"
 , "description": "lifting code to the client: dual side templating made easy"
-, "version": "0.1.0"
+, "version": "0.1.1"
 , "homepage": "https://github.com/dodo/node-lift"
 , "author": "dodo (https://github.com/dodo)"
 , "repository": {"type": "git", "url": "git://github.com/dodo/node-lift.git"}
