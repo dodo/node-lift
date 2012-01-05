@@ -10,9 +10,9 @@
 , "scripts": {
     "install": "node-waf configure build",
     "update": "node-waf build"}
-, "dependencies": {
-    "coffee-script": ">= 1.1.1"}
 , "devDependencies": {
+    "coffee-script": ">= 1.1.1",
+    "muffin": ">= 0.2.6",
     "connect": ">= 1.5.1",
     "coffeekup": ">= 0.2.3"}
 }
