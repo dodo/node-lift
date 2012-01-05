@@ -1,2 +1,2 @@
 
-module.exports = require('./build/default/lift')
+module.exports = require('./lib/lift')
