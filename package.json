@@ -8,8 +8,7 @@
 , "engines": {"node": ">= 0.4.x"}
 , "keywords": ["client", "server", "node", "code", "lift", "lazy", "templating", "template"]
 , "scripts": {
-    "install": "node-waf configure build",
-    "update": "node-waf build"}
+    "prepublish": "cake build"}
 , "devDependencies": {
     "coffee-script": ">= 1.1.1",
     "muffin": ">= 0.2.6",
